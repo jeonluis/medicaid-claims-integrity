@@ -23,4 +23,29 @@ This is a demonstration of **risk flags**, not fraud findings. Multiple claims o
 
 ## Planned additions
 
-Public NYC SADC registry analysis, provider entity resolution, enrollment/authorization checks, audit worklist, HEDIS-inspired eligibility validation, and automated tests.
+## Project Results
+
+Analyzed 303 synthetic Medicaid adult day care claims across five fictional providers using SQL, Python, and SQLite.
+
+**Data-quality findings:**
+- Identified one claim overlapping a recorded inpatient hospitalization.
+- Detected two potentially duplicate claim records.
+- Identified one claim containing an invalid service date.
+- Generated a consolidated audit worklist with standardized exception flags and review statuses.
+- Exported the findings to CSV for downstream analysis and reporting.
+
+**Key metrics:**
+- Total claims analyzed: 303
+- Claims flagged: 4
+- Flag rate: 1.32%
+- Payment value associated with flagged claims: $366.36
+
+All findings are based on synthetic data. Flagged payments do not represent confirmed overpayments, fraud, or recoverable funds.
+
+## Future Enhancements
+
+- Provider-level data-quality scorecards and normalized exception rates.
+- Public NYC social adult day care facility registry analysis.
+- Enrollment and authorization validation using synthetic eligibility data.
+- HEDIS-inspired data completeness and eligibility checks.
+- Automated testing and reproducible reporting.
