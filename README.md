@@ -1,51 +1,138 @@
 # Medicaid Claims Data Quality & Payment Integrity Analytics
 
-Portfolio learning project using **synthetic** Medicaid adult day care claims. No real member records or allegations about real facilities.
+**Python | SQL | SQLite | Healthcare Claims Analytics**
 
-## Quick start
+An independent healthcare analytics portfolio project demonstrating how SQL and Python can identify potential billing anomalies in synthetic Medicaid adult day care claims data.
+
+> **Data disclaimer:** All members, providers, claims, and payment amounts are fictional. This project does not analyze real Medicaid beneficiaries or facilities, and analytical flags do not establish fraud or improper payments.
+
+## Business Problem
+
+Healthcare payers and Medicaid programs process large volumes of claims. Data-quality issues and potentially inconsistent billing records can complicate payment review, compliance monitoring, and financial oversight.
+
+This project demonstrates a rules-based approach to identifying claims that may warrant additional review, focusing on:
+
+- Potential duplicate claims
+- Services dated during recorded inpatient hospital stays
+- Invalid service dates
+
+The objective is to turn raw claims records into a structured audit worklist that can support further investigation and reporting.
+
+## Technologies and Skills
+
+- **Python:** Synthetic data generation, database queries, and automated CSV export
+- **SQL / SQLite:** Relational joins, grouping, exception detection, and consolidated reporting
+- **Data quality:** Rules-based validation and exception classification
+- **Healthcare analytics:** Claims review, payment integrity concepts, and audit workflow design
+
+The project uses Python 3.9+ and the Python standard library. No external packages are required.
+
+## Dataset
+
+The data generator creates a reproducible SQLite database containing:
+
+- 100 fictional Medicaid members
+- 5 fictional adult day care providers
+- 300 baseline claims plus 3 deliberately injected anomalous claims
+- Synthetic hospitalization records used for overlap checks
+
+The resulting dataset contains **303 claims**. All data and payment values are invented.
+
+See [data_dictionary.md](data_dictionary.md) for field definitions and caveats.
+
+## Analytical Methodology
+
+### 1. Potential duplicate claims
+
+Groups claims by member, provider, service date, service code, paid amount, and claim status to identify repeated records.
+
+### 2. Hospitalization overlaps
+
+Joins claims to recorded inpatient hospital stays by member and flags service dates falling between admission and discharge dates, inclusive.
+
+### 3. Invalid service dates
+
+Checks for missing, incorrectly formatted, or invalid calendar dates.
+
+### 4. Consolidated audit worklist
+
+Combines the SQL exception rules into a single worklist, including claim details, exception flags, and review fields. Python exports the query results to a CSV file.
+
+## Results
+
+| Metric | Result |
+|---|---:|
+| Claims analyzed | 303 |
+| Flagged claim records | 4 |
+| Flag rate | 1.32% |
+| Payment value associated with flagged records | $366.36 |
+
+### Exceptions identified
+
+| Exception category | Flagged records |
+|---|---:|
+| Potential duplicate | 2 |
+| Hospitalization overlap | 1 |
+| Invalid service date | 1 |
+| **Total** | **4** |
+
+The two potential-duplicate records belong to **one duplicate group**. The $366.36 figure is the sum of payment values associated with all flagged records, **not a confirmed overpayment or recoverable amount**.
+
+See [audit_worklist.csv](audit_worklist.csv) for the example output.
+
+## How to Run
+
+Clone the repository:
+
+```bash
+git clone https://github.com/jeonluis/medicaid-claims-integrity.git
+cd medicaid-claims-integrity
+```
+
+Generate the synthetic dataset:
 
 ```bash
 python3 generate_data.py
+```
+
+Run the validation checks and export the audit worklist:
+
+```bash
 python3 run_checks.py
 ```
 
-Python 3.9+ required; no external packages.
+The second command prints the rule-based findings and writes the consolidated results to `audit_worklist.csv`.
 
-## What is included
+## Repository Files
 
-- `generate_data.py`: creates a reproducible SQLite database with 100 fictional members, 5 fictional providers, and 300 baseline claims plus deliberately injected anomalies.
-- `run_checks.py`: reports duplicate service records, inpatient-stay overlaps, and invalid service dates.
-- `data_dictionary.md`: definitions and caveats.
+| File | Purpose |
+|---|---|
+| `generate_data.py` | Generate synthetic claims and related data |
+| `run_checks.py` | Execute validation checks and export CSV |
+| `duplicate_claims.sql` | Identify potential duplicate claims |
+| `hospital_overlap.sql` | Identify inpatient stay overlaps |
+| `invalid_dates.sql` | Identify invalid service dates |
+| `audit_worklist.sql` | Consolidate exception flags |
+| `audit_worklist.csv` | Example audit output |
+| `data_dictionary.md` | Dataset definitions and caveats |
 
-## Important caveats
+## Limitations
 
-This is a demonstration of **risk flags**, not fraud findings. Multiple claims on a day may be legitimate (adjustments, voids, different services); inpatient overlap can require further review. The dataset and payment values are invented. Rules are illustrative, not a representation of New York Medicaid adjudication policy.
+This is a demonstration of data-quality and payment-integrity concepts, not a production claims adjudication or fraud-detection system.
 
-## Planned additions
-
-## Project Results
-
-Analyzed 303 synthetic Medicaid adult day care claims across five fictional providers using SQL, Python, and SQLite.
-
-**Data-quality findings:**
-- Identified one claim overlapping a recorded inpatient hospitalization.
-- Detected two potentially duplicate claim records.
-- Identified one claim containing an invalid service date.
-- Generated a consolidated audit worklist with standardized exception flags and review statuses.
-- Exported the findings to CSV for downstream analysis and reporting.
-
-**Key metrics:**
-- Total claims analyzed: 303
-- Claims flagged: 4
-- Flag rate: 1.32%
-- Payment value associated with flagged claims: $366.36
-
-All findings are based on synthetic data. Flagged payments do not represent confirmed overpayments, fraud, or recoverable funds.
+- Duplicate records may reflect legitimate adjustments, voids, or other billing activity.
+- Hospitalization overlaps require clinical and operational context.
+- Flagged payment amounts are not verified financial losses.
+- The validation rules are illustrative and do not represent official New York Medicaid adjudication requirements.
 
 ## Future Enhancements
 
-- Provider-level data-quality scorecards and normalized exception rates.
-- Public NYC social adult day care facility registry analysis.
-- Enrollment and authorization validation using synthetic eligibility data.
-- HEDIS-inspired data completeness and eligibility checks.
-- Automated testing and reproducible reporting.
+- Provider-level exception rates and reporting
+- Synthetic eligibility and authorization validation
+- Automated testing of analytical rules
+- Additional reporting and visualizations
+- Analysis of publicly available facility registry data, where appropriate
+
+## Project Context
+
+Developed as an independent portfolio project combining clinical healthcare experience, managed care knowledge, and technical interests in healthcare data analytics, economics, and payment integrity.
